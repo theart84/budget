@@ -30,18 +30,22 @@ export default {
     },
     rules: {
       type: [{required: true, message: 'Please select type', trigger: 'blur'}],
-      comment: [{required: true, message: 'Please imput comment', trigger: 'change'}],
+      comment: [{required: true, message: 'Please input comment', trigger: 'change'}],
       value: [
-        {required: true, message: 'Please imput value', trigger: 'change'},
-        {type: 'number', message: 'Value must be a numver', trigger: 'change'}
+        {required: true, message: 'Please input value', trigger: 'change'},
+        {type: 'number', message: 'Value must be a number', trigger: 'change'},
       ]
     }
   }),
   methods: {
     onSumbit() {
       this.$refs.addItemForm.validate((valid) => {
+        const newFormData = {...this.formData};
+        if (newFormData.type === 'OUTCOME') {
+          newFormData.value = -Math.abs(newFormData.value);
+        }
         if (valid) {
-          this.$emit('submitForm', {...this.formData});
+          this.$emit('submitForm', newFormData);
           this.$refs.addItemForm.resetFields();
         }
       })

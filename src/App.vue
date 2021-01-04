@@ -2,7 +2,10 @@
   <div id="app">
     <Form @submitForm="onFormSubmit"/>
     <TotalBalance :total="totalBalance" />
-    <BudgetList  :list="list" @deleteItem="onDeleteItem"/>
+    <SortButtons @viewAllTransactions="allTransactions"
+                 @viewIncomeTransactions="incomeTransactions"
+                 @viewOutcomeTransactions="outcomeTransactions"/>
+    <BudgetList  :list="transaction"/>
   </div>
 </template>
 
@@ -10,6 +13,7 @@
 import BudgetList from "@/components/BudgetList";
 import TotalBalance from "@/components/TotalBalance";
 import Form from "@/components/Form";
+import SortButtons from "@/components/SortButtons";
 
 export default {
   name: 'App',
@@ -17,26 +21,15 @@ export default {
     BudgetList,
     TotalBalance,
     Form,
+    SortButtons,
   },
   data: () => ({
-    list: {
-      1: {
-        type: 'INCOME',
-        value: 100,
-        comment: 'Some comment',
-        id: 1,
-      },
-      2: {
-        type: 'OUTCOME',
-        value: -50,
-        comment: 'Some outcome comment',
-        id: 2,
-      }
-    },
+    list: {},
+    transaction: {},
   }),
   computed: {
     totalBalance() {
-      return Object.values(this.list).reduce((acc, item) => acc + item.value, 0);
+      return Object.values(this.transaction).reduce((acc, item) => acc + item.value, 0);
     },
   },
   methods: {
@@ -46,9 +39,31 @@ export default {
     onFormSubmit(data) {
       const newObj = {
         ...data,
-        id: String(Math.random())
+        id: Math.random()
       };
       this.$set(this.list, newObj.id, newObj);
+      this.allTransactions();
+    },
+    allTransactions() {
+      return this.transaction = {...this.list};
+    },
+    incomeTransactions() {
+      const newObj = Object.entries(this.list).reduce((acc, [key, value]) => {
+        if (value.type === 'INCOME') {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+      return this.transaction = {...newObj};
+    },
+    outcomeTransactions() {
+      const newObj = Object.entries(this.list).reduce((acc, [key, value]) => {
+        if (value.type === 'OUTCOME') {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+      return this.transaction = {...newObj};
     }
   }
 }
