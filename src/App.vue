@@ -1,11 +1,8 @@
 <template>
   <div id="app">
-    <Form @submitForm="onFormSubmit"/>
-    <TotalBalance :total="totalBalance" />
-    <SortButtons @viewAllTransactions="allTransactions"
-                 @viewIncomeTransactions="incomeTransactions"
-                 @viewOutcomeTransactions="outcomeTransactions"/>
-    <BudgetList  :list="transaction"/>
+    <Form/>
+    <TotalBalance :total="totalBalance"/>
+    <BudgetList/>
   </div>
 </template>
 
@@ -13,7 +10,7 @@
 import BudgetList from "@/components/BudgetList";
 import TotalBalance from "@/components/TotalBalance";
 import Form from "@/components/Form";
-import SortButtons from "@/components/SortButtons";
+import {mapGetters} from 'vuex';
 
 export default {
   name: 'App',
@@ -21,50 +18,15 @@ export default {
     BudgetList,
     TotalBalance,
     Form,
-    SortButtons,
   },
-  data: () => ({
-    list: {},
-    transaction: {},
-  }),
+  data: () => ({}),
   computed: {
+    ...mapGetters('transactionsStore', ['transactionsList']),
     totalBalance() {
-      return Object.values(this.transaction).reduce((acc, item) => acc + item.value, 0);
+      return Object.values(this.transactionsList).reduce((acc, item) => acc + item.value, 0);
     },
   },
   methods: {
-    onDeleteItem(id) {
-      this.$delete(this.list, id);
-    },
-    onFormSubmit(data) {
-      const newObj = {
-        ...data,
-        id: Math.random()
-      };
-      this.$set(this.list, newObj.id, newObj);
-      this.allTransactions();
-    },
-    allTransactions() {
-      return this.transaction = {...this.list};
-    },
-    incomeTransactions() {
-      const newObj = Object.entries(this.list).reduce((acc, [key, value]) => {
-        if (value.type === 'INCOME') {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
-      return this.transaction = {...newObj};
-    },
-    outcomeTransactions() {
-      const newObj = Object.entries(this.list).reduce((acc, [key, value]) => {
-        if (value.type === 'OUTCOME') {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
-      return this.transaction = {...newObj};
-    }
   }
 }
 </script>

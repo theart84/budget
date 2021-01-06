@@ -1,9 +1,12 @@
 <template>
   <div class="budget-list-wrap">
     <ElCard :header="header">
+      <SortButtons @viewAllTransactions="allTransactions"
+                   @viewIncomeTransactions="incomeTransactions"
+                   @viewOutcomeTransactions="outcomeTransactions"/>
       <template v-if="!isEmpty">
-        <div v-for="(item, prop) in list" :key="prop">
-          <BudgetListItem :comment="item.comment" :value="item.value" :id="item.id" @deleteItem="onDeleteItem"/>
+        <div v-for="(item, prop) in transactionsList" :key="prop">
+          <BudgetListItem :list="item"/>
         </div>
       </template>
       <ElAlert v-else type="info" :title="emptyTitle" :closable="false"/>
@@ -13,30 +16,31 @@
 
 <script>
 import BudgetListItem from "@/components/BudgetListItem";
-
+import SortButtons from "@/components/SortButtons";
+import {mapGetters} from "vuex";
 export default {
   name: 'BudgetList',
   components: {
-    BudgetListItem
-  },
-  props: {
-    list: {
-      type: Object,
-      default: () => ({})
-    }
+    BudgetListItem,
+    SortButtons
   },
   data: () => ({
     header: 'Budget List',
     emptyTitle: 'Empty list',
   }),
   computed: {
+    ...mapGetters("transactionsStore",["transactionsList"]),
     isEmpty() {
-      return !Object.keys(this.list).length;
-    }
+      return !Object.keys(this.transactionsList).length;
+    },
   },
   methods: {
-    onDeleteItem(id) {
-      this.$delete(this.list, id);
+    allTransactions() {
+
+    },
+    incomeTransactions() {
+    },
+    outcomeTransactions() {
     }
   }
 }

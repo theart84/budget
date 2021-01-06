@@ -1,45 +1,43 @@
 <template>
   <div class="list-item">
-    <span class="budget-comment"><i :class="icon"></i>{{ comment }}</span>
-    <span class="budget-value" :style="colorBalance">{{ value }}</span>
-    <ElButton type="danger" size="mini" @click="deleteItem(id)">Delete</ElButton>
+    <span class="budget-comment"><i :class="icon"></i>{{ list.comment }}</span>
+    <span class="budget-value" :style="colorBalance">{{ list.value }}</span>
+    <ElButton type="danger" size="mini" @click="deleteItem(list.id)">Delete</ElButton>
   </div>
 </template>
 
 <script>
+import {mapActions} from 'vuex';
+
 export default {
   name: 'BudgetListItem',
   props: {
-    comment: {
-      type: String
-    },
-    value: {
-      type: Number
-    },
-    id: {
-      type: Number
+    list: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({}),
   methods: {
+    ...mapActions('transactionsStore', ["delTransaction"]),
     deleteItem(id) {
       let isConfirm = confirm('Are you sure you want to delete the transaction?')
       if (isConfirm) {
-        this.$emit('deleteItem', id);
+        this.delTransaction(id)
       }
     }
   },
   computed: {
     icon() {
-      if (this.value > 0) {
+      if (this.list.value > 0) {
         return `el-icon-top`;
       }
       return `el-icon-bottom`;
     },
     colorBalance() {
-      if (this.value > 0) {
+      if (this.list.value > 0) {
         return `color: green`;
-      } else if (this.value < 0) {
+      } else if (this.list.value < 0) {
         return `color: red`;
       }
       return `color: black`;

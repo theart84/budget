@@ -13,27 +13,16 @@
       <ElFormItem label="Value" prop="value">
         <ElInput v-model.number="formData.value"/>
       </ElFormItem>
-      <ElButton @click="onSumbit" type="primary">Submit</ElButton>
+      <ElButton @click="onSubmit" type="primary">Submit</ElButton>
     </ElForm>
   </ElCard>
 </template>
 
 
 <script>
+import {mapActions} from "vuex";
 export default {
   name: 'Form',
-  // data: () => ({
-  //   formData: {
-  //     type: 'INCOME',
-  //     comment: '',
-  //     value: 0
-  //   },
-  //   rules: {
-  //     type: [{required: true, message: 'Please select type', trigger: 'blur'}],
-  //     comment: [{required: true, message: 'Please input comment', trigger: 'change'}],
-  //     value: [{validator: this.checkValue, trigger: 'change'}]
-  //   }
-  // }),
   data() {
     return {
       formData: {
@@ -49,6 +38,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions("transactionsStore", ["addTransactions"]),
     checkValue(rule, value, callback) {
       setTimeout(() => {
         if (!Number.isInteger(value)) {
@@ -62,14 +52,14 @@ export default {
         }
       }, 1000);
     },
-    onSumbit() {
+    onSubmit() {
       this.$refs.addItemForm.validate((valid) => {
         const newFormData = {...this.formData};
         if (newFormData.type === 'OUTCOME') {
           newFormData.value = -Math.abs(newFormData.value);
         }
         if (valid) {
-          this.$emit('submitForm', newFormData);
+          this.addTransactions(newFormData);
           this.$refs.addItemForm.resetFields();
         }
       })
