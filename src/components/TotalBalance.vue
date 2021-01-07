@@ -1,8 +1,9 @@
 <template>
-  <div class="total-value" :style="colorBalance">Balance: {{ total }}</div>
+  <div class="total-value" :style="colorBalance">Balance: {{ totalBalance }}</div>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
 export default  {
   name: 'TotalBalance',
   props: {
@@ -12,10 +13,11 @@ export default  {
     }
   },
   computed: {
+    ...mapGetters("transactionsStore", ["totalBalance"]),
     colorBalance() {
-      if (this.total > 0) {
+      if (this.totalBalance > 0) {
         return `color: green`;
-      } else if (this.total < 0) {
+      } else if (this.totalBalance < 0) {
         return `color: red`;
       }
       return `color: black`;

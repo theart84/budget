@@ -18,6 +18,7 @@
 import BudgetListItem from "@/components/BudgetListItem";
 import SortButtons from "@/components/SortButtons";
 import {mapGetters} from "vuex";
+import {mapActions} from "vuex";
 export default {
   name: 'BudgetList',
   components: {
@@ -27,6 +28,7 @@ export default {
   data: () => ({
     header: 'Budget List',
     emptyTitle: 'Empty list',
+
   }),
   computed: {
     ...mapGetters("transactionsStore",["transactionsList"]),
@@ -35,12 +37,15 @@ export default {
     },
   },
   methods: {
+    ...mapActions("transactionsStore", ["changeTypeTransaction"]),
     allTransactions() {
-
+      this.changeTypeTransaction('ALL')
     },
     incomeTransactions() {
+      this.changeTypeTransaction('INCOME')
     },
     outcomeTransactions() {
+      this.changeTypeTransaction('OUTCOME')
     }
   }
 }

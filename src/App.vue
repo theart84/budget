@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Form/>
-    <TotalBalance :total="totalBalance"/>
+    <TotalBalance/>
     <BudgetList/>
   </div>
 </template>
@@ -22,9 +22,6 @@ export default {
   data: () => ({}),
   computed: {
     ...mapGetters('transactionsStore', ['transactionsList']),
-    totalBalance() {
-      return Object.values(this.transactionsList).reduce((acc, item) => acc + item.value, 0);
-    },
   },
   methods: {
   }
